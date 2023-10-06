@@ -1,0 +1,143 @@
+﻿@page "/"
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="ma-4">
+	<h1 style="margin-bottom: 20px">Dashboard</h1>
+
+	<div style="display: flex; gap: 30px; flex-wrap: wrap">
+
+		<div style="flex: 1 0 650px">
+
+			<h3>Products</h3>
+
+			<MudTable Items="@products" Hover="true" Outlined="true"
+					  FixedHeader="true" Height="587px" Style="margin-bottom: 8%">
+				<HeaderContent>
+					<MudTh>ID</MudTh>
+					<MudTh>Name</MudTh>
+					<MudTh>Category</MudTh>
+					<MudTh>Price</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="ID">@context.Id</MudTd>
+					<MudTd DataLabel="Name">@context.Name</MudTd>
+					<MudTd DataLabel="Category">@context.Category</MudTd>
+					<MudTd DataLabel="Price">@context.Price</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<MudChart ChartType="ChartType.Donut" LegendPosition="Position.Bottom"
+					  Width="300px" Height="300px"
+					  InputData="@products.GroupBy(p => p.Category).Select(group => (double)group.Sum(p => p.Price)).ToArray()"
+					  InputLabels="@products.Select(p => p.Category).Distinct().ToArray()">
+
+			</MudChart>
+
+		</div>
+
+		<div style="flex: 1 0 650px">
+
+			<h3>Sales</h3>
+
+			<MudTable Items="@sales" Hover="true" Outlined="true"
+					  FixedHeader="true" Height="587px" Style="margin-bottom: 4%">
+				<HeaderContent>
+					<MudTh>ID</MudTh>
+					<MudTh>Customer</MudTh>
+					<MudTh>Amount</MudTh>
+					<MudTh>PurchasedOn</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="ID">@context.Id</MudTd>
+					<MudTd DataLabel="Name">@context.Customer</MudTd>
+					<MudTd DataLabel="Category">@context.Amount</MudTd>
+					<MudTd DataLabel="Price">@context.PurchasedOn.ToString("dd/MM/yyyy")</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels"
+					  Width="100%" Height="400px">
+			</MudChart>
+
+
+		</div>
+
+	</div>
+</div>
+
+
+
+@using Microsoft.AspNetCore.SignalR.Client;
+@using demo_signalR_1.Entities
+@using demo_signalR_1.Services
+
+@inject DashboardService dashboardService;
+@inject NavigationManager Navigation;
+@inject ISnackbar Snackbar
+
+@code {
+	List<Product> products = new();
+	List<Sale> sales = new();
+	public List<ChartSeries> Series = new();
+	public string[] XAxisLabels = Array.Empty<string>();
+
+
+	private HubConnection? hubConnection;
+
+	protected override async Task OnInitializedAsync()
+	{
+		products = await dashboardService.GetProducts();
+		sales = await dashboardService.GetSales();
+
+		Series = new List<ChartSeries>
+		{
+			new ChartSeries
+			{
+				Name = "Sales",
+				Data = sales.GroupBy(s => s.PurchasedOn)
+							.Select(group => (double)group.Sum(s => s.Amount))
+							.ToArray(),
+			},
+		};
+
+		XAxisLabels = sales.Select(s => s.PurchasedOn.ToString("dd/MM")).Distinct().ToArray();
+
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl(Navigation.ToAbsoluteUri("/dashboardHub"))
+			.Build();
+
+		hubConnection.On<List<Product>>("RefreshProducts", newProducts =>
+		{
+			this.products = newProducts;
+			InvokeAsync(() =>
+			{
+				StateHasChanged();
+				Snackbar.Add(
+					"Product Table has changed", Severity.Success
+				);
+			});
+
+		});
+
+		hubConnection.On<List<Sale>>("RefreshSales", newSales =>
+		{
+			this.sales = newSales;
+			XAxisLabels = sales.Select(s => s.PurchasedOn.ToString("dd/MM")).Distinct().ToArray();
+			Series[0].Data = sales.GroupBy(s => s.PurchasedOn).Select(group => (double)group.Sum(s => s.Amount))
+							.ToArray();
+
+			InvokeAsync(() =>
+			{
+				StateHasChanged();
+				Snackbar.Add(
+					"Sale Table has changed", Severity.Success
+				);
+			});
+		});
+
+		await hubConnection.StartAsync();
+
+	}
+
+}
