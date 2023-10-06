@@ -1,5 +1,71 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
-</MudNavMenu>
+﻿<style>
+	/* Define the default styles for the navbar items */
+	.navbar {
+		display: flex;
+		flex-direction: column
+	}
+
+		.navbar a {
+			display: flex;
+			align-items: center;
+			padding: 12px 18px;
+			margin: 8px 8px 0px 8px; /* top - right - bottom - left */
+			gap: 10px;
+			transition: background-color 0.4s;
+			border-radius: 8px;
+		}
+
+		.navbar .current-page {
+			background-color: #594AE2;
+			color: white;
+		}
+
+		.navbar a:hover {
+			background-color: #594AE2;
+			transition: background-color color 0.4s 0.05s;
+			color: white;
+		}
+</style>
+
+<div class="navbar">
+
+	@for (int i = 0; i <= 1; ++i)
+	{
+		var currentIndex = i;
+		<a href="@menuItems[i].page" class="@(currentPageIndex == i ? "current-page" : "")"
+		@onclick="(() => changeCurrentPageIndex(currentIndex))">
+			<MudIcon Icon="@menuItems[i].icon" /><span>@menuItems[i].title</span>
+		</a>
+	}
+</div>
+
+@code {
+	private class MenuItem
+	{
+		public string? page { get; set; }
+		public string? icon { get; set; }
+		public string? title { get; set; }
+	}
+
+	private MenuItem[] menuItems = new MenuItem[]
+	{
+		new MenuItem {
+			page = "", 
+			icon = Icons.Material.Filled.Dashboard,
+			title = "Dashboard",
+		},
+		new MenuItem {
+			page = "counter",
+			icon = Icons.Material.Filled.FlutterDash,
+			title = "Counter",
+		},
+	};
+
+	private int currentPageIndex = 0;
+
+	private void changeCurrentPageIndex(int index)
+	{
+		currentPageIndex = index;
+	}
+}
+
