@@ -69,12 +69,14 @@
 
 
 @using Microsoft.AspNetCore.SignalR.Client;
-@using demo_signalR_1.Entities
-@using demo_signalR_1.Services
+@using demo_signalR_1.Entities;
+@using demo_signalR_1.Services;
 
 @inject DashboardService dashboardService;
 @inject NavigationManager Navigation;
 @inject ISnackbar Snackbar
+
+@implements IDisposable
 
 @code {
 	List<Product> products = new();
@@ -138,6 +140,22 @@
 
 		await hubConnection.StartAsync();
 
+
+	}
+
+	public void Dispose()
+	{
+		DisposeHubConnection();
+	}
+
+	// Phương thức để ngắt kết nối Hub Connection
+	private void DisposeHubConnection()
+	{
+		if (hubConnection != null)
+		{
+			hubConnection.DisposeAsync();
+			hubConnection = null;
+		}
 	}
 
 }
