@@ -39,6 +39,7 @@
 	}
 </div>
 
+@inject NavigationManager Navigation
 @code {
 	private class MenuItem
 	{
@@ -50,7 +51,7 @@
 	private MenuItem[] menuItems = new MenuItem[]
 	{
 		new MenuItem {
-			page = "", 
+			page = "/", 
 			icon = Icons.Material.Filled.Dashboard,
 			title = "Dashboard",
 		},
@@ -61,7 +62,14 @@
 		},
 	};
 
-	private int currentPageIndex = 0;
+	private int currentPageIndex;
+
+	protected override void OnInitialized()
+	{
+		Uri uri = new Uri(Navigation.Uri);
+		string page = uri.Segments[uri.Segments.Length - 1];
+		currentPageIndex = Array.FindIndex(menuItems, menuItem => menuItem.page == page);
+	}
 
 	private void changeCurrentPageIndex(int index)
 	{
