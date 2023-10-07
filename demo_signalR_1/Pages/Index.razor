@@ -2,17 +2,74 @@
 
 <PageTitle>Dashboard</PageTitle>
 
-<div class="ma-4">
-	<h1 style="margin-bottom: 20px">Dashboard</h1>
+
+<style>
+
+	.content-table {
+		border-collapse: collapse;
+		width: 100%;
+		border-radius: 10px 10px 0 0;
+		overflow: hidden;
+		font-weight: bold;
+	}
+
+	.content-table thead {
+		background-color: #594AE2;
+		color: white;
+		text-align: left;
+		height: 70px;
+	}
+
+	.content-table thead tr th {
+		padding: 0px 15px;
+		font-size: 20px;
+	}
+
+	.content-table td {
+		padding: 0px 15px;
+		height: 54px;
+	}
+
+	.content-table th:first-of-type, .content-table td:first-of-type {
+		padding: 0px 35px;
+	}
+
+	.content-table tbody {
+		height: 540px;
+		font-size: 16px;
+	}
+
+	.content-table tbody tr {
+		border-bottom: 1px solid #ddd;
+		border-left: 1px solid #ddd; 
+		border-right: 1px solid #ddd;
+		transition: background-color 0.4s;
+	}
+
+	.content-table tbody tr:hover {
+		background-color: #594AE233;
+		color: #594AE2;
+	}
+
+	.content-table tbody tr:last-of-type {
+		border-bottom: 2px solid #594AE2
+	}
+
+
+</style>
+
+<div class="mx-6 mt-4">
+	<h1 style="margin-bottom: 8px">Dashboard</h1>
 
 	<div style="display: flex; gap: 30px; flex-wrap: wrap">
 
-		<div style="flex: 1 0 650px">
+		<div style="flex: 1 0 650px;">
 
-			<h2>Products</h2>
-
+			<div style="font-size: 24px; font-weight:bold; margin-bottom: 4px">Products</div>
+			@*
 			<MudTable Items="@products" Hover="true" Outlined="true"
-					  FixedHeader="true" Height="587px" Style="margin-bottom: 8%">
+					  FixedHeader="true" Height="587px" Style="margin-bottom: 8%"
+					  HeaderClass="table-header">
 				<HeaderContent>
 					<MudTh>ID</MudTh>
 					<MudTh>Name</MudTh>
@@ -25,7 +82,35 @@
 					<MudTd DataLabel="Category">@context.Category</MudTd>
 					<MudTd DataLabel="Price">@context.Price</MudTd>
 				</RowTemplate>
-			</MudTable>
+			</MudTable> *@
+
+			<div style="height: 611px; overflow-y:scroll; margin-bottom: 60px">
+				<table class="content-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Category</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						@for (int i = 0; i < products.Count; ++i)
+						{
+							<tr>
+								<td>@products[i].Id</td>
+								<td>@products[i].Name</td>
+								<td>@products[i].Category</td>
+								<td>@products[i].Price</td>
+							</tr>
+						}
+					</tbody>
+
+
+				</table>
+			</div>
 
 			<MudChart ChartType="ChartType.Donut" LegendPosition="Position.Bottom"
 					  Width="300px" Height="300px"
@@ -36,11 +121,11 @@
 
 		</div>
 
-		<div style="flex: 1 0 650px">
+		<div style="flex: 1 0 750px">
 
-			<h2>Sales</h2>
+			<div style="font-size: 24px; font-weight:bold; margin-bottom: 4px">Sales</div>
 
-			<MudTable Items="@sales" Hover="true" Outlined="true"
+			@* <MudTable Items="@sales" Hover="true" Outlined="true" 
 					  FixedHeader="true" Height="587px" Style="margin-bottom: 4%">
 				<HeaderContent>
 					<MudTh>ID</MudTh>
@@ -54,9 +139,37 @@
 					<MudTd DataLabel="Category">@context.Amount</MudTd>
 					<MudTd DataLabel="Price">@context.PurchasedOn.ToString("dd/MM/yyyy")</MudTd>
 				</RowTemplate>
-			</MudTable>
+			</MudTable> *@
 
-			<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels"
+			<div style="height: 611px; overflow-y:scroll; margin-bottom: 20px">
+				<table class="content-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Customer</th>
+							<th>Amount</th>
+							<th>PurchasedOn</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						@for (int i = 0; i < sales.Count; ++i)
+						{
+							<tr>
+								<td>@sales[i].Id</td>
+								<td>@sales[i].Customer</td>
+								<td>@sales[i].Amount</td>
+								<td>@sales[i].PurchasedOn.ToString("dd/MM/yyyy")</td>
+							</tr>
+						}
+					</tbody>
+
+
+				</table>
+			</div>
+
+			<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Style="font-weight: bold"
 					  Width="100%" Height="400px">
 			</MudChart>
 
