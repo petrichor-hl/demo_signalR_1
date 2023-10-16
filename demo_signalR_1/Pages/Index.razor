@@ -2,61 +2,7 @@
 
 <PageTitle>Dashboard</PageTitle>
 
-
-<style>
-
-	.content-table {
-		border-collapse: collapse;
-		width: 100%;
-		border-radius: 10px 10px 0 0;
-		overflow: hidden;
-		font-weight: bold;
-	}
-
-	.content-table thead {
-		background-color: #594AE2;
-		color: white;
-		text-align: left;
-		height: 70px;
-	}
-
-	.content-table thead tr th {
-		padding: 0px 15px;
-		font-size: 20px;
-	}
-
-	.content-table td {
-		padding: 0px 15px;
-		height: 54px;
-	}
-
-	.content-table th:first-of-type, .content-table td:first-of-type {
-		padding: 0px 35px;
-	}
-
-	.content-table tbody {
-		height: 540px;
-		font-size: 16px;
-	}
-
-	.content-table tbody tr {
-		border-bottom: 1px solid #ddd;
-		border-left: 1px solid #ddd; 
-		border-right: 1px solid #ddd;
-		transition: background-color 0.4s;
-	}
-
-	.content-table tbody tr:hover {
-		background-color: #594AE233;
-		color: #594AE2;
-	}
-
-	.content-table tbody tr:last-of-type {
-		border-bottom: 2px solid #594AE2
-	}
-
-
-</style>
+<link rel="stylesheet" type="text/css" href="css/index.css" />
 
 <div class="mx-6 mt-4">
 	<h1 style="margin-bottom: 8px">Dashboard</h1>
@@ -197,7 +143,6 @@
 	public List<ChartSeries> Series = new();
 	public string[] XAxisLabels = Array.Empty<string>();
 
-
 	private HubConnection? hubConnection;
 
 	protected override async Task OnInitializedAsync()
@@ -252,7 +197,6 @@
 		});
 
 		await hubConnection.StartAsync();
-
 
 	}
 
