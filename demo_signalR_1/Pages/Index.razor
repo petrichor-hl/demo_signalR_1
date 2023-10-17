@@ -184,7 +184,8 @@
 		{
 			this.sales = newSales;
 			XAxisLabels = sales.Select(s => s.PurchasedOn.ToString("dd/MM")).Distinct().ToArray();
-			Series[0].Data = sales.GroupBy(s => s.PurchasedOn).Select(group => (double)group.Sum(s => s.Amount))
+			Series[0].Data = sales.GroupBy(s => s.PurchasedOn)
+							.Select(group => (double)group.Sum(s => s.Amount))
 							.ToArray();
 
 			InvokeAsync(() =>

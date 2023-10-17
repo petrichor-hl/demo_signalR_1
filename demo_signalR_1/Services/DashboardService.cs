@@ -11,8 +11,8 @@ namespace demo_signalR_1.Services
 	public class DashboardService
 	{
 		readonly AppDbContext _dbContext = new();
-		private readonly SqlTableDependency<Product> _productTableDependency;
-		private readonly SqlTableDependency<Sale> _saleTableDependency;
+		private readonly SqlTableDependency<Product> _productTableListener;
+		private readonly SqlTableDependency<Sale> _saleTableListener;
 
 		readonly string _connectionString = "Data Source=DESKTOP-8PSQBN9\\HOANGLAM;Initial Catalog=demo_signalR_1;Integrated Security=True;TrustServerCertificate=True";
 		private readonly IHubContext<DashboardHub> _context;
@@ -21,13 +21,13 @@ namespace demo_signalR_1.Services
         {
 			_context = context;
 
-			_productTableDependency = new SqlTableDependency<Product>(_connectionString, "Product");
-			_productTableDependency.OnChanged += ProductChanged;
-			_productTableDependency.Start();
+			_productTableListener = new SqlTableDependency<Product>(_connectionString, "Product");
+			_productTableListener.OnChanged += ProductChanged;
+			_productTableListener.Start();
 
-			_saleTableDependency = new SqlTableDependency<Sale>(_connectionString, "Sale");
-			_saleTableDependency.OnChanged += SaleChanged;
-			_saleTableDependency.Start();
+			_saleTableListener = new SqlTableDependency<Sale>(_connectionString, "Sale");
+			_saleTableListener.OnChanged += SaleChanged;
+			_saleTableListener.Start();
 		}
 
 		private async void ProductChanged(object sender, RecordChangedEventArgs<Product> e)
