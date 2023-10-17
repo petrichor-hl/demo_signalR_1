@@ -170,13 +170,10 @@
 		hubConnection.On<List<Product>>("RefreshProducts", newProducts =>
 		{
 			this.products = newProducts;
-			InvokeAsync(() =>
-			{
-				StateHasChanged();
-				Snackbar.Add(
-					"Product Table has changed", Severity.Success
-				);
-			});
+			InvokeAsync(StateHasChanged);
+			Snackbar.Add(
+				"Product Table has changed", Severity.Success
+			);
 
 		});
 
@@ -188,13 +185,10 @@
 							.Select(group => (double)group.Sum(s => s.Amount))
 							.ToArray();
 
-			InvokeAsync(() =>
-			{
-				StateHasChanged();
-				Snackbar.Add(
-					"Sale Table has changed", Severity.Success
-				);
-			});
+			InvokeAsync(StateHasChanged);
+			Snackbar.Add(
+				"Sale Table has changed", Severity.Success
+			);
 		});
 
 		await hubConnection.StartAsync();
